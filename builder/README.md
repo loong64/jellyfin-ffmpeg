@@ -32,6 +32,7 @@ Available targets:
 * `win64` (x86_64 Windows, windows>=7)
 * `linux64` (x86_64 Linux, glibc>=2.28, linux>=4.18)
 * `linuxarm64` (arm64 (aarch64) Linux, glibc>=2.28, linux>=4.18)
+* `linuxloong64` (loong64 (loongarch64) Linux, glibc>=2.38, linux>=6.6)
 
 Available variants:
 * `gpl` Includes all dependencies, even those that require full GPL instead of just LGPL.

@@ -6,6 +6,7 @@ SCRIPT_COMMIT="778a66d6c6537f08eabb91955dbbf1bce3812894"
 ffbuild_enabled() {
     [[ $TARGET == mac* ]] && return -1
     [[ $TARGET == *arm64 ]] && return -1
+    [[ $TARGET == *loong64 ]] && return -1
     return 0
 }
 
@@ -36,5 +37,6 @@ ffbuild_configure() {
 ffbuild_unconfigure() {
     [[ $TARGET == mac* ]] && return 0
     [[ $TARGET == *arm64 ]] && return 0
+    [[ $TARGET == *loong64 ]] && return 0
     echo --disable-libvpl
 }

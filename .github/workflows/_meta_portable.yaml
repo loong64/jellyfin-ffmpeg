@@ -27,7 +27,7 @@ jobs:
     name: 'Build Portable FFmpeg'
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         arch: ${{fromJson(inputs.architectures)}}
   

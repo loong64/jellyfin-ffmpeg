@@ -32,7 +32,7 @@ jobs:
     name: 'Build FFmpeg'
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         release: ${{fromJson(inputs.codenames)}}
         arch: ${{fromJson(inputs.architectures)}}

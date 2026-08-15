@@ -33,6 +33,12 @@ ffbuild_dockerbuild() {
         )
     fi
 
+    if [[ $TARGET == linuxloong64 ]]; then
+        myconf+=(
+            --disable-malloc0returnsnull
+        )
+    fi
+
     if [[ $TARGET == linux* ]]; then
         myconf+=(
             --host="$FFBUILD_TOOLCHAIN"

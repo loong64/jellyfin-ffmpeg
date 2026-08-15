@@ -6,6 +6,7 @@ SCRIPT_BRANCH="jellyfin-rga-next"
 
 ffbuild_enabled() {
     [[ $TARGET == linux* ]] && [[ $TARGET == *arm64 ]] && return 0
+    [[ $TARGET == linux* ]] && [[ $TARGET == *loong64 ]] && return 0
     return -1
 }
 
@@ -49,6 +50,6 @@ ffbuild_configure() {
 
 ffbuild_unconfigure() {
     [[ $TARGET != linux* ]] && return 0
-    [[ $TARGET != *arm64 ]] && return 0
+    [[ $TARGET != *arm64 || $TARGET != *loong64 ]] && return 0
     echo --disable-rkrga
 }

@@ -9,6 +9,7 @@ packages:
   - bookworm-arm64
   - trixie-amd64
   - trixie-arm64
+  - trixie-loong64
   - jammy-amd64
   - jammy-arm64
   - noble-amd64

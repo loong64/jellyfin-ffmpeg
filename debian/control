@@ -53,7 +53,7 @@ Build-Depends:
  nasm
 
 Package: jellyfin-ffmpeg7
-Architecture: amd64 arm64
+Architecture: amd64 arm64 loong64
 Multi-Arch: foreign
 Replaces: jellyfin-ffmpeg, jellyfin-ffmpeg5, jellyfin-ffmpeg6
 Conflicts: jellyfin-ffmpeg, jellyfin-ffmpeg5, jellyfin-ffmpeg6

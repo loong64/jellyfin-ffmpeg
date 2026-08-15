@@ -24,6 +24,12 @@ prepare_extra_common() {
             CMAKE_TOOLCHAIN_OPT="-DCMAKE_TOOLCHAIN_FILE=${SOURCE_DIR}/toolchain-${ARCH}.cmake"
             MESON_CROSS_OPT="--cross-file=${SOURCE_DIR}/cross-${ARCH}.meson"
         ;;
+        'loong64')
+            CROSS_PREFIX_OPT="loongarch64-linux-gnu-"
+            CROSS_OPT="--host=loongarch64-linux-gnu CC=loongarch64-linux-gnu-gcc CXX=loongarch64-linux-gnu-g++"
+            CMAKE_TOOLCHAIN_OPT="-DCMAKE_TOOLCHAIN_FILE=${SOURCE_DIR}/toolchain-${ARCH}.cmake"
+            MESON_CROSS_OPT="--cross-file=${SOURCE_DIR}/cross-${ARCH}.meson"
+        ;;
     esac
 
     # ICONV
@@ -187,11 +193,21 @@ prepare_extra_common() {
     wget ${fftw3_link} -O fftw3.tar.gz
     tar xaf fftw3.tar.gz
     pushd fftw-${fftw3_ver}
-    if [ "${ARCH}" = "amd64" ]; then
-        fftw3_optimizations="--enable-sse2 --enable-avx --enable-avx-128-fma --enable-avx2 --enable-avx512"
-    else
-        fftw3_optimizations="--enable-neon"
-    fi
+    case ${ARCH} in
+        'amd64')
+            fftw3_optimizations="--enable-sse2 --enable-avx --enable-avx-128-fma --enable-avx2 --enable-avx512"
+        ;;
+        'arm64')
+            fftw3_optimizations="--enable-neon"
+        ;;
+        'loong64')
+            curl --retry 10 -sSL -o config.guess https://github.com/cgitmirror/config/raw/refs/heads/master/config.guess
+            curl --retry 10 -sSL -o config.sub https://github.com/cgitmirror/config/raw/refs/heads/master/config.sub
+        ;;
+        *)
+            fftw3_optimizations=""
+        ;;
+    esac
     ./configure \
         ${CROSS_OPT} \
         --prefix=${TARGET_DIR} \
@@ -725,6 +741,23 @@ EOF
     yes | apt-get install -y -o Dpkg::Options::="--force-overwrite" -o APT::Immediate-Configure=0 gcc-${GCC_VER}-source gcc-${GCC_VER}-aarch64-linux-gnu g++-${GCC_VER}-aarch64-linux-gnu libstdc++6-arm64-cross binutils-aarch64-linux-gnu bison flex libtool gdb sharutils netbase libmpc-dev libmpfr-dev systemtap-sdt-dev autogen expect chrpath zip libc6-dev:arm64 linux-libc-dev:arm64 libgcc1:arm64 libstdc++6:arm64
 }
 
+# Prepare the cross-toolchain
+prepare_crossbuild_env_loong64() {
+    # Prepare the Debian-specific cross-build requirements
+    if [[ $( lsb_release -i -s ) == "Debian" ]]; then
+        CODENAME="$( lsb_release -c -s )"
+        echo "deb [arch=loong64] http://mirrors.loong64.com/debian/ ${CODENAME} main contrib non-free non-free-firmware" >> /etc/apt/sources.list
+        apt-get update -o Acquire::AllowInsecureRepositories=true
+        apt-get install -y --allow-unauthenticated debian-loong64-non-official-archive-keyring
+    fi
+    # Add loong64 architecture
+    dpkg --add-architecture loong64
+    apt-get update && apt-get dist-upgrade -y
+    # Install dependencies
+    ln -fs /usr/share/zoneinfo/America/Toronto /etc/localtime
+    yes | apt-get install -y -o Dpkg::Options::="--force-overwrite" -o APT::Immediate-Configure=0 gcc-${GCC_VER}-source gcc-${GCC_VER}-loongarch64-linux-gnu g++-${GCC_VER}-loongarch64-linux-gnu libstdc++6-loong64-cross binutils-loongarch64-linux-gnu bison flex libtool gdb sharutils netbase libmpc-dev libmpfr-dev systemtap-sdt-dev autogen expect chrpath zip libc6-dev:loong64 linux-libc-dev:loong64 libgcc1:loong64 libstdc++6:loong64
+}
+
 # Set the architecture-specific options
 case ${ARCH} in
     'amd64')
@@ -745,6 +778,16 @@ case ${ARCH} in
         CONFIG_SITE="/etc/dpkg-cross/cross-config.${ARCH}"
         DEP_ARCH_OPT="--host-arch arm64"
         BUILD_ARCH_OPT="-aarm64"
+    ;;
+    'loong64')
+        prepare_crossbuild_env_loong64
+        ln -s /usr/bin/loongarch64-linux-gnu-gcc-${GCC_VER} /usr/bin/loongarch64-linux-gnu-gcc
+        ln -s /usr/bin/loongarch64-linux-gnu-gcc-ar-${GCC_VER} /usr/bin/loongarch64-linux-gnu-gcc-ar
+        ln -s /usr/bin/loongarch64-linux-gnu-g++-${GCC_VER} /usr/bin/loongarch64-linux-gnu-g++
+        prepare_extra_common
+        CONFIG_SITE="/etc/dpkg-cross/cross-config.${ARCH}"
+        DEP_ARCH_OPT="--host-arch loong64"
+        BUILD_ARCH_OPT="-aloong64"
     ;;
 esac
 

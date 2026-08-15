@@ -6,6 +6,7 @@ SCRIPT_COMMIT="afed28d37aca1938da2eedc50599bb3535a987ec"
 ffbuild_enabled() {
     [[ $TARGET == mac* ]] && return -1
     [[ $TARGET == *arm64 ]] && return -1
+    [[ $TARGET == *loong64 ]] && return -1
     return 0
 }
 
@@ -24,5 +25,6 @@ ffbuild_configure() {
 ffbuild_unconfigure() {
     [[ $TARGET == mac* ]] && return 0
     [[ $TARGET == *arm64 ]] && return 0
+    [[ $TARGET == *loong64 ]] && return 0
     echo --disable-amf
 }

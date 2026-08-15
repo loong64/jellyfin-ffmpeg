@@ -6,6 +6,7 @@ usage() {
     echo -e "Releases:          Arches:"
     echo -e " * bullseye         * amd64"
     echo -e " * bookworm         * arm64"
+    echo -e " * trixie           * loong64"
     echo -e " * trixie"
     echo -e " * jammy"
     echo -e " * noble"
@@ -69,6 +70,9 @@ case ${cli_arch} in
     ;;
     'arm64')
         arch="arm64"
+    ;;
+    'loong64')
+        arch="loong64"
     ;;
     *)
         echo "Invalid architecture."

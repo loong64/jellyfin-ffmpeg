@@ -6,6 +6,7 @@ SCRIPT_COMMIT="dbf83dc3b1ce6bad46e1628aaf2da5ef731157b8"
 ffbuild_enabled() {
     [[ $TARGET != linux* ]] && return -1
     [[ $TARGET == linuxarm64 ]] && return -1
+    [[ $TARGET == linuxloong64 ]] && return -1
     return 0
 }
 
@@ -54,9 +55,9 @@ ffbuild_dockerbuild() {
 }
 
 ffbuild_configure() {
-    [[ $TARGET == linux* ]] && [[ $TARGET != linuxarm64 ]] && echo --enable-vaapi
+    [[ $TARGET == linux* ]] && [[ $TARGET != linuxarm64 ]] && [[ $TARGET != linuxloong64 ]] && echo --enable-vaapi
 }
 
 ffbuild_unconfigure() {
-    [[ $TARGET == linux* ]] && [[ $TARGET != linuxarm64 ]] && echo --disable-vaapi
+    [[ $TARGET == linux* ]] && [[ $TARGET != linuxarm64 ]] && [[ $TARGET != linuxloong64 ]] && echo --disable-vaapi
 }

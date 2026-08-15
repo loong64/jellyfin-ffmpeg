@@ -36,7 +36,7 @@ ffbuild_dockerbuild() {
         --with-incoming-stack-boundary=2
     )
 
-    if [[ $TARGET != *arm64 ]]; then
+    if [[ $TARGET == linux64 ]]; then
         myconf+=(
             --enable-sse2
             --enable-avx
@@ -44,10 +44,13 @@ ffbuild_dockerbuild() {
             --enable-avx2
             --enable-avx512
         )
-    else
+    elif [[ $TARGET == *arm64 ]]; then
         myconf+=(
             --enable-neon
         )
+    elif [[ $TARGET == *loong64 ]]; then
+        curl --retry 10 -sSL -o config.guess https://github.com/cgitmirror/config/raw/refs/heads/master/config.guess
+        curl --retry 10 -sSL -o config.sub https://github.com/cgitmirror/config/raw/refs/heads/master/config.sub
     fi
 
     if [[ $TARGET == win* || $TARGET == linux* ]]; then
